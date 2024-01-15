@@ -1,11 +1,23 @@
 ALUctr<3:0>
-OPctr<2:0>
-ALUctr OP    SUBctr OVctr SIGctr OPctr
-0000    addu  0      0     x      000   
-0001    add   0      1     x      000   
-0010    or    x      0     x      001   
-0011    sll   x      0     x      011   
-0100    subu  1      0     x      000   
-0101    sub   1      1     x      000   
-0110    sltu  1      0     0      010   
-0111    slt   1      0     1      010   
+OPcode<2:0>
+ALUctr  OP    SUBctr OVctr SIGctr OPcode
+0000    addu  0      0     x      000
+0001    add   0      1     x      000
+0010    or    x      0     x      001
+0011    sll   x      0     x      011
+0100    subu  1      0     x      000
+0101    sub   1      1     x      000
+0110    sltu  1      0     0      010
+0111    slt   1      0     1      010
+1000    not used                  100
+1001    and   x      0     x      101
+1010    xor   x      0     x      110
+
+OPcode COMMENT
+000    add
+001    or
+010    slt
+011    sll
+100    not used
+101    and
+110    xor
