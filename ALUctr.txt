@@ -1,0 +1,11 @@
+ALUctr<2:0>
+OPctr<1:0>
+ALUctr OP    SUBctr OVctr SIGctr OPctr
+000    addu  0      0     x      00   
+001    add   0      1     x      00   
+010    or    x      0     x      01   
+011    sll   x      0     x      11   
+100    subu  1      0     x      00   
+101    sub   1      1     x      00   
+110    sltu  1      0     0      10   
+111    slt   1      0     1      10   
