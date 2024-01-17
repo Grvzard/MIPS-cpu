@@ -13,6 +13,7 @@ ALUctr  OP    SUBctr OVctr SIGctr OPcode
 1001    and   x      0     x      101
 1010    xor   x      0     x      110
 1011    sllv  x      0     1      011
+1100    lui   x      0     x      111
 
 OPcode COMMENT
 000    add
@@ -22,3 +23,4 @@ OPcode COMMENT
 100    not used
 101    and
 110    xor
+111    lui
