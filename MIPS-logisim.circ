@@ -1502,6 +1502,7 @@
     <comp lib="4" loc="(330,680)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="PC"/>
+      <a name="showInTab" val="true"/>
       <a name="trigger" val="falling"/>
       <a name="width" val="30"/>
     </comp>
@@ -4271,41 +4272,57 @@
     <comp lib="4" loc="(1000,490)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg4"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(1000,710)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg5"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(1170,490)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg6"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(1170,710)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg7"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(680,490)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg0"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(680,710)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg1"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(840,490)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg2"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(840,710)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
       <a name="label" val="reg3"/>
+      <a name="showInTab" val="true"/>
+      <a name="trigger" val="falling"/>
       <a name="width" val="32"/>
     </comp>
     <wire from="(1030,580)" to="(1030,600)"/>
