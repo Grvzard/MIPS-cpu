@@ -1,0 +1,16 @@
+- adder32 overflow flag
+
+truth table of (A[31], B[31], 31st Ci, 31st Co, F[31])
+A B Ci F Co
+0 0 0  0 0
+0 0 1  1 0  (overflow)
+0 1 0  1 0
+0 1 1  0 1
+1 0 0  1 0
+1 0 1  0 1
+1 1 0  0 1  (overflow)
+1 1 1  1 1
+
+tuple (A, B, F) identifiable
+
+overflow <==> Ci ^ Co <==> (~A & ~B & F) | (A & B & ~F)
