@@ -14,3 +14,10 @@ A B Ci F Co
 tuple (A, B, F) identifiable
 
 overflow <==> Ci ^ Co <==> (~A & ~B & F) | (A & B & ~F)
+
+- flush a stage's result
+(to prevent reg-files from being modified by this result)
+(pc, 32gpr)
+IF: instr <- 0
+ID: RegWr <- 0, MemWr <- 0, Branch <- 0, Jump <- 0
+EX: RegWr <- 0, MemWr <- 0, Branch <- 0, Jump <- 0, fwEx_flag <- 0, Overflow <- 0
