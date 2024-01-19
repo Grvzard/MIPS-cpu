@@ -1,0 +1,3 @@
+{
+    "verilog.formatting.veribleVerilogFormatter.arguments": "--wrap_end_else_clauses=true"
+}
