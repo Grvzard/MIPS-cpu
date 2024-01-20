@@ -12,7 +12,6 @@ A B Ci F Co
 1 1 1  1 1
 
 tuple (A, B, F) identifiable
-
 overflow <==> Ci ^ Co <==> (~A & ~B & F) | (A & B & ~F)
 
 - flush a stage's result
@@ -21,3 +20,7 @@ overflow <==> Ci ^ Co <==> (~A & ~B & F) | (A & B & ~F)
 IF: instr <- 0
 ID: RegWr <- 0, MemWr <- 0, Branch <- 0, Jump <- 0
 EX: RegWr <- 0, MemWr <- 0, Branch <- 0, Jump <- 0, fwEx_flag <- 0, Overflow <- 0
+
+- slt/sltu, the implementation of less-then comparator
+slt:  A < B <==> A - B < 0 <==> Sign & ~Overflow | Overflow & ~Sign <==> Sign ^ Overflow
+sltu: A < B -> B + (-B) = (F:0, Cout:1) -> A + (-B) < (F:0, Cout:1) <==> ~Cout
