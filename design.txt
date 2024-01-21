@@ -18,9 +18,28 @@ overflow <==> Ci ^ Co <==> (~A & ~B & F) | (A & B & ~F)
 (to prevent reg-files from being modified by this result)
 (pc, 32gpr)
 IF: instr <- 0
-ID: RegWr <- 0, MemWr <- 0, Branch <- 0, Jump <- 0
-EX: RegWr <- 0, MemWr <- 0, Branch <- 0, Jump <- 0, fwEx_flag <- 0, Overflow <- 0
+ID: RegWr <- 0, MemWr <- 0
+EX: RegWr <- 0, MemWr <- 0, Overflow <- 0
 
 - slt/sltu, the implementation of less-then comparator
 slt:  A < B <==> A - B < 0 <==> Sign & ~Overflow | Overflow & ~Sign <==> Sign ^ Overflow
 sltu: A < B -> B + (-B) = (F:0, Cout:1) -> A + (-B) < (F:0, Cout:1) <==> ~Cout
+
+- jumps and branches (one delay slot)
+OP     CODE
+beq    000
+bgez   001
+bgezal 010
+bgtz   011
+blez   100
+bltz   101
+bltzal 110
+bne    111
+
+beq/bne: ~^BranchOp
+bgezal/bltzal: Branch & RegWr
+jr/jalr: Jump & Rtype
+j: Jump & ~Rtype & ~RegWr
+jal: Jump & ~Rtype & RegWr
+
+in stages other than ID, Branch means Branch or Jump
