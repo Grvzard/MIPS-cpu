@@ -18,6 +18,8 @@ ALUctr  OP    SUBctr OVctr SIGctr OPcode
 01110   sra   x      0     0      1000
 01111   srlv  x      0     1      0100
 10000   srav  x      0     1      1000
+10001   clz   x      0     0      1010
+10010   clo   x      0     1      1010
 
 OPcode  COMMENT
 0000    add
@@ -30,3 +32,4 @@ OPcode  COMMENT
 0111    lui
 1000    sra
 1001    nor
+1010    clz
