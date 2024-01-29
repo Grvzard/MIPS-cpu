@@ -1,5 +1,7 @@
-.text   
-main:   
+.text
+main:
+    nop     
+
     li      $a0,    -16
     li      $a1,    3
     mult    $a0,    $a1
@@ -43,3 +45,6 @@ main:
     mfhi    $t1
     sw      $t0,    40
     sw      $t1,    44
+
+    mul     $t0,    $a0,    $a1
+    sw      $t0,    48
