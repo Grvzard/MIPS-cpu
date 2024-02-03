@@ -71,3 +71,7 @@ madd  000000
 
 - COP0 commands
 mtc0 mfc0
+
+- a general-purpose signal Sel by instruction-decoder
+movn/movz: in ID, 1 for not-zero
+mfhi/mflo: in EX, 1 for hi
