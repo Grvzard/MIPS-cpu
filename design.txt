@@ -75,3 +75,11 @@ mtc0 mfc0
 - a general-purpose signal Sel by instruction-decoder
 movn/movz: in ID, 1 for not-zero
 mfhi/mflo: in EX, 1 for hi
+signed/unsigned load: in Mem, 1 for sign-extend
+
+- Address Alignment control signal (AAop)
+OP CODE WEMASK
+00 w    1111
+01 b    0001
+10 h    0011
+11 uw   1111
