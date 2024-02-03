@@ -3197,9 +3197,6 @@
     <comp lib="1" loc="(2320,360)" name="NOT Gate">
       <a name="facing" val="south"/>
     </comp>
-    <comp lib="1" loc="(2340,360)" name="NOT Gate">
-      <a name="facing" val="south"/>
-    </comp>
     <comp lib="1" loc="(2390,740)" name="OR Gate">
       <a name="inputs" val="3"/>
     </comp>
@@ -3880,7 +3877,7 @@
     <wire from="(2320,320)" to="(2320,330)"/>
     <wire from="(2330,300)" to="(2340,300)"/>
     <wire from="(2330,310)" to="(2330,360)"/>
-    <wire from="(2340,300)" to="(2340,330)"/>
+    <wire from="(2340,300)" to="(2340,360)"/>
     <wire from="(2390,740)" to="(2410,740)"/>
     <wire from="(2470,280)" to="(2580,280)"/>
     <wire from="(2480,300)" to="(2480,330)"/>
