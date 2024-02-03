@@ -340,7 +340,7 @@
     <comp lib="0" loc="(1550,1410)" name="Clock"/>
     <comp lib="0" loc="(1550,4000)" name="Bit Extender">
       <a name="in_width" val="30"/>
-      <a name="out_width" val="8"/>
+      <a name="out_width" val="10"/>
       <a name="type" val="zero"/>
     </comp>
     <comp lib="0" loc="(1580,1490)" name="Pin">
@@ -1427,7 +1427,7 @@
     </comp>
     <comp lib="0" loc="(860,710)" name="Bit Extender">
       <a name="in_width" val="30"/>
-      <a name="out_width" val="8"/>
+      <a name="out_width" val="10"/>
     </comp>
     <comp lib="0" loc="(870,2270)" name="Tunnel">
       <a name="label" val="ID_MovAcc"/>
@@ -1724,6 +1724,7 @@
       <a name="width" val="30"/>
     </comp>
     <comp lib="4" loc="(1570,4040)" name="RAM">
+      <a name="addrWidth" val="10"/>
       <a name="appearance" val="logisim_evolution"/>
       <a name="dataWidth" val="32"/>
       <a name="trigger" val="falling"/>
@@ -1891,6 +1892,7 @@
       <a name="width" val="32"/>
     </comp>
     <comp lib="4" loc="(900,700)" name="RAM">
+      <a name="addrWidth" val="10"/>
       <a name="appearance" val="logisim_evolution"/>
       <a name="asyncread" val="true"/>
       <a name="dataWidth" val="32"/>
