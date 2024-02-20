@@ -43,6 +43,8 @@ j: Jump & ~Rtype & ~RegWr
 jal: Jump & ~Rtype & RegWr
 
 in stages other than ID, Branch means Branch or Jump
+_al(branch/jump and link) instructions produce RegWr and generate ALUop "addu"
+we generalize it to all branchs generate "addu"
 
 - MDU (pseudo Multiply/Divide Unit)
 OP    CODE FUNC
