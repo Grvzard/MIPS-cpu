@@ -79,7 +79,7 @@ signed/unsigned load: in Mem, 1 for sign-extend
 
 - Address Alignment control signal (AAop)
 OP CODE WEMASK
-00 w    1111
-01 b    0001
-10 h    0011
-11 uw   1111
+00 b    0001
+01 w    1111
+10 uw   1111
+11 h    0011

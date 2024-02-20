@@ -1,10 +1,15 @@
-    .set noat
     .set noreorder
 .text
- 
+
 _start:
     nop     
-    li      $1, 0x66
-    sw      $1, 0($0)
-    lw      $2, 0($0)
-    add     $3, $1,     $2
+    li      $t0,    0xffffffff
+    sw      $t0,    0($0)
+    sh      $t0,    4($0)
+    sb      $t0,    8($0)
+
+    lw      $t1,    0($0)
+    lh      $t2,    0($0)
+    lhu     $t3,    0($0)
+    lb      $t4,    0($0)
+    lbu     $t5,    0($0)
