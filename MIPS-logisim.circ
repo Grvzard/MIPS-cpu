@@ -4056,10 +4056,10 @@
     <comp lib="2" loc="(670,1580)" name="Multiplexer">
       <a name="width" val="5"/>
     </comp>
-    <comp lib="8" loc="(1860,721)" name="Text">
+    <comp lib="8" loc="(1860,720)" name="Text">
       <a name="text" val="1:sign, 0:zero (on imm)"/>
     </comp>
-    <comp lib="8" loc="(1909,627)" name="Text">
+    <comp lib="8" loc="(1905,625)" name="Text">
       <a name="text" val="1:imm, 0:bus"/>
     </comp>
     <wire from="(1020,280)" to="(1130,280)"/>
@@ -4305,8 +4305,10 @@
     <wire from="(2900,300)" to="(2900,320)"/>
     <wire from="(2900,320)" to="(2910,320)"/>
     <wire from="(2900,410)" to="(2900,590)"/>
-    <wire from="(2900,590)" to="(2900,1120)"/>
+    <wire from="(2900,590)" to="(2900,860)"/>
     <wire from="(2900,590)" to="(3050,590)"/>
+    <wire from="(2900,860)" to="(2900,1120)"/>
+    <wire from="(2900,860)" to="(3150,860)"/>
     <wire from="(2910,300)" to="(2910,310)"/>
     <wire from="(2910,310)" to="(2920,310)"/>
     <wire from="(2910,320)" to="(2910,330)"/>
@@ -4320,10 +4322,8 @@
     <wire from="(3010,300)" to="(3010,320)"/>
     <wire from="(3010,320)" to="(3020,320)"/>
     <wire from="(3010,410)" to="(3010,610)"/>
-    <wire from="(3010,610)" to="(3010,860)"/>
+    <wire from="(3010,610)" to="(3010,940)"/>
     <wire from="(3010,610)" to="(3050,610)"/>
-    <wire from="(3010,860)" to="(3010,940)"/>
-    <wire from="(3010,860)" to="(3150,860)"/>
     <wire from="(3010,940)" to="(3010,1120)"/>
     <wire from="(3010,940)" to="(3150,940)"/>
     <wire from="(3020,300)" to="(3020,310)"/>
