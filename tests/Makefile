@@ -1,10 +1,12 @@
 
-# TC_cc := mips-linux-gnu-gcc -mips32
-# TC_objcopy := mips-linux-gnu-objcopy
-# TC_ld := mips-linux-gnu-ld
-TC_cc := clang -target mips -mcpu=mips32
-TC_objcopy := llvm-objcopy
-TC_ld := ld.lld
+TC_as := mips-linux-gnu-as -mips32
+TC_cc := mips-linux-gnu-gcc -mips32
+TC_objcopy := mips-linux-gnu-objcopy
+TC_ld := mips-linux-gnu-ld
+# TC_as := clang -target mips -mcpu=mips32 -c
+# TC_cc := clang -target mips -mcpu=mips32
+# TC_objcopy := llvm-objcopy
+# TC_ld := ld.lld
 
 tests_b := $(wildcard basic/[0-9]_*.s)
 
@@ -24,7 +26,7 @@ all: $(tests_b:.s=.s.bin)
 	@${TC_cc} -c -o $@ $<
 
 %.s.o: %.s
-	@${TC_cc} -c -o $@ $<
+	@${TC_as} -o $@ $<
 
 %.a: %.c.o start.s.o
 	@${TC_ld} -Tlinker.ld -static -o $@ $<
@@ -37,6 +39,6 @@ all: $(tests_b:.s=.s.bin)
 	@${TC_cc} -S -O3 -o $@ $<
 
 clean:
-	rm *.bin *.o
+	rm *.bin *.o basic/*.bin
 
 .PHONY: all clean
