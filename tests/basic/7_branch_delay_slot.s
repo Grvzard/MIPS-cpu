@@ -1,18 +1,16 @@
     .set noat
-    # .set noreorder
 .text
 
-_start:
+.globl main
+main:
     nop     
     li      $1,     0x1
     li      $0,     0x1
 _j: 
-    j       _jal
-_jal:
-    jal     _jalr
+    j       _jalr
 _jalr:
     li      $5,     _br
-    jalr    $31,    $5
+    jalr    $5
 
 _br:
     bne     $1,     $0,             _test2
