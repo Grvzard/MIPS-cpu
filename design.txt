@@ -70,6 +70,7 @@ msubu 000101
 msub  000100
 maddu 000001
 madd  000000
+mul   000010
 
 - COP0 commands
 mtc0 mfc0

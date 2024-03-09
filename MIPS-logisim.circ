@@ -3398,9 +3398,6 @@
       <a name="label" val="RegDst"/>
       <a name="output" val="true"/>
     </comp>
-    <comp lib="0" loc="(970,600)" name="Tunnel">
-      <a name="label" val="RegDst"/>
-    </comp>
     <comp lib="1" loc="(1030,360)" name="NOT Gate">
       <a name="facing" val="south"/>
     </comp>
@@ -4179,6 +4176,9 @@
     <comp lib="8" loc="(1905,625)" name="Text">
       <a name="text" val="1:imm, 0:bus"/>
     </comp>
+    <comp lib="8" loc="(449,1594)" name="Text">
+      <a name="text" val="(clz/clo)"/>
+    </comp>
     <wire from="(1020,280)" to="(1130,280)"/>
     <wire from="(1030,300)" to="(1030,330)"/>
     <wire from="(1040,300)" to="(1040,330)"/>
@@ -4920,7 +4920,6 @@
     <wire from="(910,280)" to="(1020,280)"/>
     <wire from="(910,520)" to="(910,600)"/>
     <wire from="(910,520)" to="(960,520)"/>
-    <wire from="(910,600)" to="(970,600)"/>
     <wire from="(920,2500)" to="(920,2910)"/>
     <wire from="(920,300)" to="(920,330)"/>
     <wire from="(930,300)" to="(930,330)"/>
