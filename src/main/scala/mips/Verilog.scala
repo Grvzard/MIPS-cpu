@@ -25,3 +25,13 @@ object VerilogAlu extends VerilogDump {
   def vModule = new Alu
   vDump()
 }
+
+object VerilogMult32 extends VerilogDump {
+  def vModule = new Mult32
+  vDump()
+}
+
+object VerilogCsa extends VerilogDump {
+  def vModule = new Csa(32)
+  vDump()
+}
