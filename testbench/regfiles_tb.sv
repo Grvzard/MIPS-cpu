@@ -3,9 +3,9 @@
 module test;
   reg aclr;
   reg clk;
-  reg [7:0] addr_a;
-  reg [7:0] addr_b;
-  reg [7:0] addr_w;
+  reg [4:0] addr_a;
+  reg [4:0] addr_b;
+  reg [4:0] addr_w;
   reg wren;
   reg [31:0] data_w;
   wire [31:0] data_a;

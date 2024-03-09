@@ -1,9 +1,9 @@
 module regfiles (
     input wire aclr,
     input wire clk,
-    input wire [7:0] addr_a,
-    input wire [7:0] addr_b,
-    input wire [7:0] addr_w,
+    input wire [4:0] addr_a,
+    input wire [4:0] addr_b,
+    input wire [4:0] addr_w,
     input wire wren,
     input wire [31:0] data_w,
     output wire [31:0] data_a,
