@@ -35,3 +35,8 @@ object VerilogCsa extends VerilogDump {
   def vModule = new Csa(32)
   vDump()
 }
+
+object VerilogRegfile extends VerilogDump {
+  def vModule = new Regfile
+  vDump()
+}
