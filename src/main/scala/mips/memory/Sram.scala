@@ -13,17 +13,19 @@ object Sram {
   }
 }
 
+class SramPort(implicit ramWidth: Int) extends Bundle {
+  val en = Input(Bool())
+  val wr = Input(Bool())
+  val addr = Input(UInt(ramWidth.W))
+  val wmask = Input(UInt(4.W))
+  val wdata = Input(UInt(32.W))
+  val rdata = Output(UInt(32.W))
+}
+
 class Sram(width: Int) extends Module {
   import Sram._
 
-  val io = IO(new Bundle {
-    val en = Input(Bool())
-    val wr = Input(Bool())
-    val addr = Input(UInt(width.W))
-    val wmask = Input(UInt(4.W))
-    val wdata = Input(UInt(32.W))
-    val rdata = Output(UInt(32.W))
-  })
+  val io = IO(new SramPort()(width))
 
   val mem = SyncReadMem(1 << width, UInt(32.W))
   io.rdata := DontCare
