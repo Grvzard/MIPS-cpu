@@ -3,35 +3,30 @@ package mips.cpu
 import chisel3._
 import mips._
 import mips.cpu.{stage => stg, _}
+import mips.memory.{RomInterface, SramInterface}
 
-object Rom {
-  def apply(width: Int) = {
-    val mem = Module(new memory.Sram(width))
-    mem.io.en := true.B
-    mem.io.wr := false.B
-    mem.io.wmask := 0.U
-    mem.io.wdata := 0.U
-    mem
-  }
+class CpuInterface extends Bundle {
+  val iram = Flipped(new RomInterface)
+  val dram = Flipped(new SramInterface)
+}
+
+class CpuDebugIn extends Bundle {
+  val pc, regfile = Input(Bool())
 }
 
 class Cpu extends Module {
-  implicit val iramWidth: Int = 8
-  // TODO: move Ram out
-  val iram = Rom(iramWidth) // 256 instructions
-  val dram = Module(new memory.Sram(8))
+  val io = IO(new CpuInterface)
+  val debugOpts = IO(new CpuDebugIn)
 
   val stgIf = Module(new stg.If)
   val stgId = Module(new stg.Id)
   val stgExe = Module(new stg.Exe)
   val stgMem = Module(new stg.Mem)
 
+  stgIf.debug := debugOpts.pc
+
   // IF/ID
   stgId.io.id <> stgIf.io.id
-
-  // IRAM
-  iram.io.addr := stgIf.io.instrAddr
-  stgId.io.iramData := iram.io.rdata
 
   // ID/EXE
   stgExe.io.exe <> stgId.io.exe
@@ -44,15 +39,12 @@ class Cpu extends Module {
 
   stgId.io.wb := stgMem.io.wb
 
-  // DRAM
-  dram.io <> stgExe.io.dram
-  stgMem.io.dramData := dram.io.rdata
+  // IRAM
+  io.iram.addr := stgIf.io.instrAddr
+  stgId.io.iramData := io.iram.rdata
 
-  printf("-----------\n")
-  printf(cf"${stgId.io.id}\n")
-  printf(cf"${stgExe.io.exe}\n")
-  printf(cf"${stgMem.io.mem}\n")
-  printf(cf"${stgMem.io.wb}\n")
-  printf("-----------\n")
+  // DRAM
+  io.dram <> stgExe.io.dram
+  stgMem.io.dramData := io.dram.rdata
 
 }

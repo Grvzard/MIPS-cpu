@@ -3,6 +3,7 @@ package mips
 import circt.stage.ChiselStage
 import mips.general._
 import mips.cpu._
+import mips.memory._
 
 trait VerilogDump extends App {
   def vModule: chisel3.RawModule
@@ -12,6 +13,13 @@ trait VerilogDump extends App {
         vModule,
         firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info")
       )
+    )
+  }
+  def vDumpFile() = {
+    ChiselStage.emitSystemVerilogFile(
+      vModule,
+      Array("-td", "verilog"),
+      firtoolOpts = Array("-disable-all-randomization")
     )
   }
 }
@@ -39,4 +47,14 @@ object VerilogCsa extends VerilogDump {
 object VerilogRegfile extends VerilogDump {
   def vModule = new Regfile
   vDump()
+}
+
+object VerilogRom extends VerilogDump {
+  def vModule = new Rom(8)
+  vDump()
+}
+
+object FileVerilogSoc extends VerilogDump {
+  def vModule = new Soc
+  vDumpFile()
 }

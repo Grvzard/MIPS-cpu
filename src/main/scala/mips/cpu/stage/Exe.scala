@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 import mips.cpu.{ExeDataForward, ExeState, MemState}
 import mips.cpu.{Alu, InstrDecoder}
-import mips.memory.SramPort
+import mips.memory.SramInterface
 
 class Exe extends Module {
   implicit val ramWidth: Int = 8
@@ -12,7 +12,7 @@ class Exe extends Module {
     val exe = Flipped(Decoupled(new ExeState))
     val mem = Output(new MemState)
     val fw = Output(new ExeDataForward)
-    val dram = Flipped(new SramPort)
+    val dram = Flipped(new SramInterface)
   })
 
   val out = io.mem
