@@ -31,8 +31,9 @@ class Cpu extends Module {
   // ID/EXE
   stgExe.io.exe <> stgId.io.exe
 
-  // EXE/ID forwarding
-  stgId.io.fw := stgExe.io.fw
+  // forwarding
+  stgId.io.fwExeData := stgExe.io.fwExeData
+  stgIf.io.fwIdBranch := stgId.io.fwIfBranch
 
   // EXE/MEM
   stgMem.io.mem := stgExe.io.mem

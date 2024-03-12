@@ -18,8 +18,8 @@ overflow <==> Ci ^ Co <==> (~A & ~B & F) | (A & B & ~F)
 (to prevent reg-files from being modified by this result)
 (pc, 32gpr)
 IF: instr <- 0
-ID: RegWr <- 0, MemWr <- 0, MDUop <- 0000
-EX: RegWr <- 0, MemWr <- 0, Overflow <- 0
+ID: RegWr <- 0, MemWr <- 0, Mem2Reg <- 0, MDUop <- 0000, ALUop <- (not 00001 or 10001)
+EX: RegWr <- 0, MemWr <- 0, Mem2Reg <- 0, Overflow <- 0
 
 - slt/sltu, the implementation of less-then comparator
 slt:  A < B <==> A - B < 0 <==> Sign & ~Overflow | Overflow & ~Sign <==> Sign ^ Overflow

@@ -2,7 +2,7 @@ package mips.cpu.stage
 
 import chisel3._
 import chisel3.util._
-import mips.cpu.{ExeDataForward, ExeState, IdState, WriteBack}
+import mips.cpu.{ExeDataForward, ExeState, IdBranchForward, IdState, WriteBack}
 import mips.cpu.InstrDecoder
 import mips.cpu.Regfile
 
@@ -10,53 +10,59 @@ class Id extends Module {
   val io = IO(new Bundle {
     val id = Flipped(Decoupled(new IdState))
     val iramData = Input(UInt(32.W))
-    val fw = Input(new ExeDataForward)
+    val fwExeData = Input(new ExeDataForward)
     val wb = Input(new WriteBack)
     val exe = Decoupled(new ExeState)
+    val fwIfBranch = Output(new IdBranchForward)
   })
 
   private val in = io.id.bits
   private val out = io.exe.bits
   val st = Reg(new IdState)
-  // out := DontCare
-  io.exe.valid := true.B
 
-  // val hasStalled = Reg(Bool())
-  // hasStalled := !io.exe.ready
   val hasStalled = RegNext(!io.exe.ready)
   val savedInstr = RegInit(0.U(32.W))
 
-  when(io.exe.ready) {
+  private val wire = Wire(new Bundle {
+    val regData0, regData1, imm16ex, pcAdd8 = UInt(32.W)
+    val instr = UInt(32.W)
+    val sigFromImm, sigExt, sigRegDst, sigRegWr, branchMet, movInvalid = Bool()
+    val sigStall, hazardLoadUse = Bool()
+    val aaOp = UInt(2.W)
+    val rw = UInt(5.W)
+    val jTarget = UInt(32.W)
+  })
+
+  when(!wire.sigStall) {
     st := in
   }.elsewhen(!hasStalled) {
     // the start of stalling, save current instruction
     savedInstr := io.iramData
   }
-  io.id.ready := io.exe.ready
+  io.id.ready := !wire.sigStall
 
   val regfile = Module(new Regfile)
   val dec = Module(new InstrDecoder)
 
   // In-module Wires
-  private val wire = Wire(new Bundle {
-    val branchOp = UInt(3.W)
-    val regData0, regData1, imm16ex = UInt(32.W)
-    val instr = UInt(32.W)
-    val sigFromImm, sigExt, sigRegDst, sigRegWr = Bool()
-    val aaOp = UInt(2.W)
-    val rw = UInt(5.W)
-  })
-  wire.branchOp :=
-    Fill(3, dec.op_beq) & "b000".U |
-      Fill(3, dec.op_bgez) & "b001".U |
-      Fill(3, dec.op_bgezal) & "b010".U |
-      Fill(3, dec.op_bgtz) & "b011".U |
-      Fill(3, dec.op_blez) & "b100".U |
-      Fill(3, dec.op_bltz) & "b101".U |
-      Fill(3, dec.op_bltzal) & "b110".U |
-      Fill(3, dec.op_bne) & "b111".U
-  wire.regData0 := regfile.io.raddr0
-  wire.regData1 := regfile.io.raddr1
+  wire.regData0 := Mux(
+    dec.io.fields.rs === 0.U,
+    0.U,
+    Mux(
+      dec.io.fields.rs === io.fwExeData.sigs.rw & io.fwExeData.sigs.regWr,
+      io.fwExeData.data,
+      Mux(dec.io.fields.rs === io.wb.sigs.rw & io.wb.sigs.regWr, io.wb.data, regfile.io.raddr0)
+    )
+  )
+  wire.regData1 := Mux(
+    dec.io.fields.rt === 0.U,
+    0.U,
+    Mux(
+      dec.io.fields.rt === io.fwExeData.sigs.rw & io.fwExeData.sigs.regWr,
+      io.fwExeData.data,
+      Mux(dec.io.fields.rt === io.wb.sigs.rw & io.wb.sigs.regWr, io.wb.data, regfile.io.raddr0)
+    )
+  )
   wire.sigFromImm := dec.op_ori | dec.op_andi | dec.op_xori | dec.op_addiu | dec.op_addi |
     dec.op_slti | dec.op_sltiu | dec.op_load_ | dec.op_store_
   wire.sigExt := dec.op_addiu | dec.op_addi | dec.op_slti | dec.op_load_ | dec.op_store_
@@ -78,19 +84,41 @@ class Id extends Module {
     31.U, // reg $ra
     Mux(wire.sigRegDst, dec.io.fields.rd, dec.io.fields.rt)
   )
+  wire.jTarget := Cat(st.nextPc(31, 28), wire.instr(25, 0), "b00".U)
+  wire.pcAdd8 := st.nextPc + 4.U
+  wire.branchMet :=
+    dec.op_beq & out.busA === out.busA |
+      (dec.op_bgez | dec.op_bgezal) & out.busA >= 0.U |
+      dec.op_bgtz & out.busA > 0.U |
+      dec.op_blez & out.busA <= 0.U |
+      (dec.op_bltz | dec.op_bltzal) & out.busA < 0.U |
+      dec.op_bne & out.busA =/= out.busB
+  wire.movInvalid := dec.op_movn & wire.regData1 === 0.U | dec.op_movz & wire.regData1 =/= 0.U
+  wire.hazardLoadUse :=
+    (dec.io.fields.rs === io.fwExeData.sigs.rw | dec.io.fields.rt === io.fwExeData.sigs.rw) &
+      io.fwExeData.sigs.regWr & io.fwExeData.sigs.mem2reg
+  wire.sigStall := !io.exe.ready | wire.hazardLoadUse
 
   // Sub Modules Wiring
   dec.io.instr := wire.instr
   regfile.io.raddr0 := dec.io.fields.rs
   regfile.io.raddr1 := dec.io.fields.rt
-  regfile.io.waddr := io.fw.sigs.rw
-  regfile.io.wen := io.fw.sigs.regWr
-  regfile.io.wdata := io.fw.data
+  regfile.io.waddr := io.fwExeData.sigs.rw
+  regfile.io.wen := io.fwExeData.sigs.regWr
+  regfile.io.wdata := io.fwExeData.data
 
   // Output Wiring
+  io.exe.valid := !(wire.movInvalid | wire.hazardLoadUse)
+
   out.nextPc := st.nextPc
   out.busA := wire.regData0
   out.busB := Mux(wire.sigFromImm, wire.imm16ex, wire.regData1)
+
+  io.fwIfBranch.sigJump := wire.branchMet | dec.op_jump_
+  io.fwIfBranch.jumpTarget :=
+    Fill(32, dec.op_branch_) & wire.pcAdd8 |
+      Fill(32, dec.op_jr | dec.op_jalr) & wire.jTarget |
+      Fill(32, dec.op_jr | dec.op_jalr) & out.busA
 
   out.exeSigs.rw := wire.rw
   out.exeSigs.shamt := dec.io.fields.shamt

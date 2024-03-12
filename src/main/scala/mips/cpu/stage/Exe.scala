@@ -11,23 +11,33 @@ class Exe extends Module {
   val io = IO(new Bundle {
     val exe = Flipped(Decoupled(new ExeState))
     val mem = Output(new MemState)
-    val fw = Output(new ExeDataForward)
+    val fwExeData = Output(new ExeDataForward)
     val dram = Flipped(new SramInterface)
   })
 
   val out = io.mem
   val st = Reg(new ExeState)
   val sigs = st.exeSigs
-  io.exe.ready := true.B // for now
-  when(io.exe.valid) {
-    st := io.exe.bits
-  }
-  // out := DontCare
 
   val alu = Module(new Alu)
   val dataOut = Wire(UInt(32.W))
 
-  // private val wire = Wire(new Bundle {})
+  private val wire = Wire(new Bundle {
+    val mduBusy = Bool()
+  })
+
+  io.exe.ready := !wire.mduBusy
+  when(io.exe.fire) {
+    st := io.exe.bits
+  }.elsewhen(io.exe.ready) {
+    st.exeSigs.aluOp := 0.U
+    st.exeSigs.mduOp := 0.U
+    st.exeSigs.regWr := false.B
+    st.exeSigs.mem2reg := false.B
+    st.exeSigs.memWr := false.B
+  }
+
+  wire.mduBusy := false.B
 
   alu.io.a := Mux(sigs.sigBranch, st.nextPc, st.busA)
   alu.io.b := Mux(sigs.sigBranch, 4.U, st.busB)
@@ -41,10 +51,10 @@ class Exe extends Module {
   out.generalSigs := st.generalSigs
   out.data := dataOut
 
-  io.fw.data := dataOut
-  io.fw.sigs.mem2reg := sigs.mem2reg
-  io.fw.sigs.regWr := sigs.regWr
-  io.fw.sigs.rw := sigs.rw
+  io.fwExeData.data := dataOut
+  io.fwExeData.sigs.mem2reg := sigs.mem2reg
+  io.fwExeData.sigs.regWr := sigs.regWr
+  io.fwExeData.sigs.rw := sigs.rw
   io.dram.addr := dataOut
   io.dram.en := sigs.mem2reg | sigs.memWr
   io.dram.wr := sigs.memWr

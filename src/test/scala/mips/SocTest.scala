@@ -13,7 +13,7 @@ class SocTest extends AnyFreeSpec {
       dut.reset.poke(false.B)
 
       dut.debugOpts.cpu.pc.poke(true.B)
-      dut.clock.step(2)
+      dut.clock.step(200)
       dut.debugOpts.dramDump.poke(true.B)
       dut.clock.step()
       // dut.debugOpts.dramDump.poke(false.B)

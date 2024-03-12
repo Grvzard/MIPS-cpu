@@ -72,11 +72,10 @@ class MemState extends Bundle {
   val memSigs = new MemSignals
 }
 
-// class MemDataForward extends Bundle {
-//   val data = UInt(32.W)
-//   val regWr = Bool()
-//   val rw = UInt(5.W)
-// }
+class IdBranchForward extends Bundle {
+  val jumpTarget = UInt(32.W)
+  val sigJump = Bool()
+}
 
 class WriteBack extends Bundle {
   val data = UInt(32.W)
