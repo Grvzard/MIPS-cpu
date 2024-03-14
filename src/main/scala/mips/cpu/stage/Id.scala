@@ -15,6 +15,7 @@ class Id extends Module {
     val exe = Decoupled(new ExeState)
     val fwIfBranch = Output(new IdBranchForward)
   })
+  val debug = IO(Input(Bool()))
 
   private val in = io.id.bits
   private val out = io.exe.bits
@@ -84,7 +85,7 @@ class Id extends Module {
     31.U, // reg $ra
     Mux(wire.sigRegDst, dec.io.fields.rd, dec.io.fields.rt)
   )
-  wire.jTarget := Cat(st.nextPc(31, 28), wire.instr(25, 0), "b00".U)
+  wire.jTarget := Cat(st.nextPc(31, 28), wire.instr(25, 0), 0.U(2.W))
   wire.pcAdd8 := st.nextPc + 4.U
   wire.branchMet :=
     dec.op_beq & out.busA === out.busA |
@@ -117,7 +118,7 @@ class Id extends Module {
   io.fwIfBranch.sigJump := wire.branchMet | dec.op_jump_
   io.fwIfBranch.jumpTarget :=
     Fill(32, dec.op_branch_) & wire.pcAdd8 |
-      Fill(32, dec.op_jr | dec.op_jalr) & wire.jTarget |
+      Fill(32, dec.op_j | dec.op_jal) & wire.jTarget |
       Fill(32, dec.op_jr | dec.op_jalr) & out.busA
 
   out.exeSigs.rw := wire.rw
@@ -165,4 +166,8 @@ class Id extends Module {
   out.memSigs.regWr := wire.sigRegWr
   out.memSigs.mem2reg := dec.op_load_
   out.memSigs.rw := wire.rw
+
+  when(debug) {
+    printf(cf"id- r: ${io.id.ready}, instr: ${io.iramData}%x, nextpc: ${st.nextPc >> 2}\n")
+  }
 }

@@ -11,19 +11,24 @@ class CpuInterface extends Bundle {
 }
 
 class CpuDebugIn extends Bundle {
-  val pc, regfile = Input(Bool())
+  val pc, regfile, fetch, decoder = Input(Bool())
 }
 
 class Cpu extends Module {
   val io = IO(new CpuInterface)
   val debugOpts = IO(new CpuDebugIn)
 
+  val pc = Module(new ProgramCounter)
   val stgIf = Module(new stg.If)
   val stgId = Module(new stg.Id)
   val stgExe = Module(new stg.Exe)
   val stgMem = Module(new stg.Mem)
 
-  stgIf.debug := debugOpts.pc
+  pc.debug := debugOpts.pc
+  stgIf.debug := debugOpts.fetch
+  stgId.debug := debugOpts.decoder
+
+  stgIf.io.pc :<>= pc.io
 
   // IF/ID
   stgId.io.id <> stgIf.io.id

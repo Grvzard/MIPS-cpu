@@ -103,7 +103,9 @@ class InstrDecoder extends Module {
   val op_bltzal = Signal(op_bx_ & instr.rt === "b10000".U)
   val op_bgtz = Signal(instr.opcode === "b000111".U)
   val op_blez = Signal(instr.opcode === "b000110".U)
-  val op_branch_ = Signal(op_beq | op_bne | op_bx_ | op_bgtz | op_blez)
+  val op_branch_ = Signal(
+    op_beq | op_bne | op_bgez | op_bgezal | op_bltz | op_bltzal | op_bgtz | op_blez
+  )
 
   val op_add = Signal(typeSP & instr.func === "b100000".U)
   val op_addu = Signal(typeSP & instr.func === "b100001".U)

@@ -15,17 +15,6 @@ object dataMask {
   }
 }
 
-// object readBin {
-//   def apply(file: String): Seq[UInt] = {
-//     val binFile = new FileInputStream(new File(file))
-//     val bytes = binFile.readAllBytes()
-//     binFile.close()
-
-//     Seq.from(bytes.map(ch => ch.U))
-//     // println(bytes.map(ch => f"$ch%02x").mkString)
-//   }
-// }
-
 class SramInterface extends Bundle {
   private val addrWidth = 8
   val en = Input(Bool())
@@ -42,9 +31,16 @@ class Sram(addrWidth: Int, initFile: String = "") extends Module {
 
   // private val mem = SyncReadMem(1 << addrWidth, UInt(32.W))
   val mem = RegInit({
-    val binFile = new FileInputStream(new File(initFile))
-    val bytes = binFile.readAllBytes()
-    binFile.close()
+    val bytes = {
+      if (initFile != "") {
+        val binFile = new FileInputStream(new File(initFile))
+        val ret = binFile.readAllBytes()
+        binFile.close()
+        ret
+      } else {
+        Array()
+      }
+    }
 
     VecInit(
       Seq
