@@ -25,7 +25,7 @@ class Id extends Module {
   val savedInstr = RegInit(0.U(32.W))
 
   private val wire = Wire(new Bundle {
-    val regData0, regData1, imm16ex, pcAdd8 = UInt(32.W)
+    val regData0, regData1, imm16ex, nextpcAddImm16 = UInt(32.W)
     val instr = UInt(32.W)
     val sigFromImm, sigExt, sigRegDst, sigRegWr, branchMet, movInvalid = Bool()
     val sigStall, hazardLoadUse = Bool()
@@ -52,7 +52,7 @@ class Id extends Module {
     Mux(
       dec.io.fields.rs === io.fwExeData.sigs.rw & io.fwExeData.sigs.regWr,
       io.fwExeData.data,
-      Mux(dec.io.fields.rs === io.wb.sigs.rw & io.wb.sigs.regWr, io.wb.data, regfile.io.raddr0)
+      Mux(dec.io.fields.rs === io.wb.sigs.rw & io.wb.sigs.regWr, io.wb.data, regfile.io.rdata0)
     )
   )
   wire.regData1 := Mux(
@@ -61,7 +61,7 @@ class Id extends Module {
     Mux(
       dec.io.fields.rt === io.fwExeData.sigs.rw & io.fwExeData.sigs.regWr,
       io.fwExeData.data,
-      Mux(dec.io.fields.rt === io.wb.sigs.rw & io.wb.sigs.regWr, io.wb.data, regfile.io.raddr0)
+      Mux(dec.io.fields.rt === io.wb.sigs.rw & io.wb.sigs.regWr, io.wb.data, regfile.io.rdata1)
     )
   )
   wire.sigFromImm := dec.op_ori | dec.op_andi | dec.op_xori | dec.op_addiu | dec.op_addi |
@@ -86,7 +86,7 @@ class Id extends Module {
     Mux(wire.sigRegDst, dec.io.fields.rd, dec.io.fields.rt)
   )
   wire.jTarget := Cat(st.nextPc(31, 28), wire.instr(25, 0), 0.U(2.W))
-  wire.pcAdd8 := st.nextPc + 4.U
+  wire.nextpcAddImm16 := st.nextPc + wire.imm16ex << 2
   wire.branchMet :=
     dec.op_beq & out.busA === out.busA |
       (dec.op_bgez | dec.op_bgezal) & out.busA >= 0.U |
@@ -104,20 +104,21 @@ class Id extends Module {
   dec.io.instr := wire.instr
   regfile.io.raddr0 := dec.io.fields.rs
   regfile.io.raddr1 := dec.io.fields.rt
-  regfile.io.waddr := io.fwExeData.sigs.rw
-  regfile.io.wen := io.fwExeData.sigs.regWr
-  regfile.io.wdata := io.fwExeData.data
+  regfile.io.waddr := io.wb.sigs.rw
+  regfile.io.wen := io.wb.sigs.regWr
+  regfile.io.wdata := io.wb.data
 
   // Output Wiring
   io.exe.valid := !(wire.movInvalid | wire.hazardLoadUse)
 
   out.nextPc := st.nextPc
   out.busA := wire.regData0
-  out.busB := Mux(wire.sigFromImm, wire.imm16ex, wire.regData1)
+  out.busB := wire.regData1
+  out.imm16ex := wire.imm16ex
 
   io.fwIfBranch.sigJump := wire.branchMet | dec.op_jump_
   io.fwIfBranch.jumpTarget :=
-    Fill(32, dec.op_branch_) & wire.pcAdd8 |
+    Fill(32, dec.op_branch_) & wire.nextpcAddImm16 |
       Fill(32, dec.op_j | dec.op_jal) & wire.jTarget |
       Fill(32, dec.op_jr | dec.op_jalr) & out.busA
 
@@ -126,6 +127,7 @@ class Id extends Module {
   out.exeSigs.sigMov := dec.op_movn | dec.op_movz
   out.exeSigs.memWr := dec.op_store_
   out.exeSigs.mem2reg := dec.op_load_
+  out.exeSigs.sigFromImm := wire.sigFromImm
   out.exeSigs.sigBranch := dec.op_branch_ | dec.op_jump_
   out.exeSigs.aluOp :=
     Fill(5, dec.op_addu | dec.op_addiu) & "b00000".U |
@@ -168,6 +170,11 @@ class Id extends Module {
   out.memSigs.rw := wire.rw
 
   when(debug) {
-    printf(cf"id- r: ${io.id.ready}, instr: ${io.iramData}%x, nextpc: ${st.nextPc >> 2}\n")
+    printf(
+      cf"id- r: ${io.id.ready}, instr: ${io.iramData}%x, nextpc: ${st.nextPc >> 2}, rs: ${dec.io.fields.rs}, rt: ${dec.io.fields.rt}\n"
+    )
+    when(io.wb.sigs.regWr & io.wb.sigs.rw =/= 0.U) {
+      printf(cf"wb- rw: ${io.wb.sigs.rw} data: ${io.wb.data}\n")
+    }
   }
 }

@@ -7,19 +7,14 @@ import java.io.{File, FileInputStream}
 import chisel3.util.experimental.loadMemoryFromFile
 
 object dataMask {
-  def apply(data: UInt, mask: UInt): UInt = {
-    Fill(8, mask(0)) & data(7, 0) |
-      Fill(8, mask(1)) & data(15, 8) |
-      Fill(8, mask(2)) & data(23, 16) |
-      Fill(8, mask(3)) & data(31, 24)
-  }
+  def apply(data: UInt, mask: UInt): UInt =
+    Cat(Fill(8, mask(3)), Fill(8, mask(2)), Fill(8, mask(1)), Fill(8, mask(0))) & data
 }
 
 class SramInterface extends Bundle {
-  private val addrWidth = 8
   val en = Input(Bool())
   val wr = Input(Bool())
-  val addr = Input(UInt(addrWidth.W))
+  val addr = Input(UInt(32.W))
   val wmask = Input(UInt(4.W))
   val wdata = Input(UInt(32.W))
   val rdata = Output(UInt(32.W))
@@ -28,6 +23,8 @@ class SramInterface extends Bundle {
 class Sram(addrWidth: Int, initFile: String = "") extends Module {
   val io = IO(new SramInterface)
   val debug = IO(Input(Bool()))
+
+  val outBuf = RegInit(0.U(32.W))
 
   // private val mem = SyncReadMem(1 << addrWidth, UInt(32.W))
   val mem = RegInit({
@@ -52,10 +49,10 @@ class Sram(addrWidth: Int, initFile: String = "") extends Module {
               ("h" + chs.map(ch => f"$ch%02x").mkString).U(32.W)
             })
         )
-        .padTo(1 << addrWidth, 0.U)
+        .padTo(1 << (addrWidth - 2), 0.U)
     )
   })
-  io.rdata := DontCare
+  io.rdata := outBuf
 
   when(debug) {
     printf(cf"${mem}\n")
@@ -63,11 +60,11 @@ class Sram(addrWidth: Int, initFile: String = "") extends Module {
   }
 
   when(io.en) {
-    val rwPort = mem(io.addr)
+    val rwPort = mem(io.addr(addrWidth - 1, 2))
     when(io.wr) {
       rwPort := dataMask(io.wdata, io.wmask) | dataMask(rwPort, ~io.wmask)
     }.otherwise {
-      io.rdata := rwPort
+      outBuf := rwPort
     }
   }
 }

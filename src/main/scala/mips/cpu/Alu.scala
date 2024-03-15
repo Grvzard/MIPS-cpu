@@ -101,9 +101,9 @@ class Alu extends Module {
       (Fill(32, "b0100".U === opmux) & res_srl) |
       (Fill(32, "b0101".U === opmux) & res_sra) |
       (Fill(32, "b0110".U === opmux) & res_xor) |
-      (Fill(32, "b0111".U === opmux) & res_nor) |
+      (Fill(32, "b0111".U === opmux) & res_lui) |
       (Fill(32, "b1000".U === opmux) & res_clz) |
       (Fill(32, "b1001".U === opmux) & res_slt) |
       (Fill(32, "b1010".U === opmux) & res_sltu) |
-      (Fill(32, "b1011".U === opmux) & res_lui)
+      (Fill(32, "b1011".U === opmux) & res_nor)
 }

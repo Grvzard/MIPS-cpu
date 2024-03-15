@@ -17,6 +17,18 @@ class Mem extends Module {
   st := io.mem
   val sigs = st.memSigs
 
-  io.wb.data := Mux(sigs.mem2reg, io.dramData, io.mem.data)
-  io.wb.sigs := sigs
+  val busW =
+    Fill(32, sigs.aaOp === "b00".U) & Cat(
+      Fill(24, st.generalSigs.gpSig & io.dramData(7)),
+      io.dramData(7, 0)
+    ) |
+      Fill(32, sigs.aaOp === "b01".U) &
+      io.dramData |
+      Fill(32, sigs.aaOp === "b11".U) & Cat(
+        Fill(16, st.generalSigs.gpSig & io.dramData(15)),
+        io.dramData(15, 0)
+      )
+
+  io.wb.data := Mux(sigs.mem2reg, busW, st.data)
+  io.wb.sigs := st.memSigs
 }

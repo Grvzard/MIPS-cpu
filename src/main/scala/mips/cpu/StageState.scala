@@ -13,7 +13,7 @@ class ExeSignals extends Bundle {
   val mem2reg = Bool() // for forwarding
   val memWr = Bool() // for forwarding
   // val sigExt = Bool() // 1: sign extend, 0: zero extend (on imm16)
-  // val sigFromImm = Bool() // (not the final result)
+  val sigFromImm = Bool() // (not the final result)
   // val sigRegDst = Bool() // 1: rd, 0: rt (not the final result)
   val aluOp = UInt(5.W)
   val mduOp = UInt(4.W)
@@ -50,6 +50,7 @@ class ExeState extends Bundle {
   val nextPc = UInt(32.W)
   val busA = UInt(32.W)
   val busB = UInt(32.W)
+  val imm16ex = UInt(32.W)
 
   val generalSigs = new GeneralSignals
   val exeSigs = new ExeSignals

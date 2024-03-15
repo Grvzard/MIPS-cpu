@@ -6,8 +6,8 @@ import mips.cpu.Cpu
 import mips.cpu.CpuDebugIn
 
 class Soc extends Module {
-  val iramWidth: Int = 8
-  val dramWidth: Int = 8
+  val iramWidth: Int = 9
+  val dramWidth: Int = 10
 
   val debugOpts = IO(new Bundle {
     val iramDump = Input(Bool())

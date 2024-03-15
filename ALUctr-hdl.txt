@@ -35,8 +35,8 @@ opSel   COMMENT
 0100    srl
 0101    sra
 0110    xor
-0111    nor
+0111    lui
 1000    clz
 1001    slt
 1010    sltu
-1011    lui
+1011    nor

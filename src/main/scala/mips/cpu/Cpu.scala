@@ -11,7 +11,7 @@ class CpuInterface extends Bundle {
 }
 
 class CpuDebugIn extends Bundle {
-  val pc, regfile, fetch, decoder = Input(Bool())
+  val pc, regfile, fetch, decoder, exe = Input(Bool())
 }
 
 class Cpu extends Module {
@@ -27,6 +27,7 @@ class Cpu extends Module {
   pc.debug := debugOpts.pc
   stgIf.debug := debugOpts.fetch
   stgId.debug := debugOpts.decoder
+  stgExe.debug := debugOpts.exe
 
   stgIf.io.pc :<>= pc.io
 

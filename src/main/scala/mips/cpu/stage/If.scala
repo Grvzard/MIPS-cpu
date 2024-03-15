@@ -14,7 +14,7 @@ class If extends Module {
   })
   val debug = IO(Input(Bool()))
 
-  io.instrAddr := io.pc.out(31, 2)
+  io.instrAddr := io.pc.out
   io.id.bits.nextPc := io.pc.out + 4.U
   io.pc.in := Mux(io.fwIdBranch.sigJump, io.fwIdBranch.jumpTarget, io.id.bits.nextPc)
   io.pc.en := io.id.ready
