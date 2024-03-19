@@ -8,5 +8,5 @@ class Clz extends BlackBox with HasBlackBoxResource {
     val in = Input(UInt(32.W))
     val out = Output(UInt(32.W))
   })
-  addResource("/clz.v")
+  addResource("/Clz.v")
 }
