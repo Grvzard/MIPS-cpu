@@ -50,7 +50,7 @@ class ExeState extends Bundle {
   val nextPc = UInt(32.W)
   val busA = UInt(32.W)
   val busB = UInt(32.W)
-  val imm16ex = UInt(32.W)
+  val imm = UInt(32.W)
 
   val generalSigs = new GeneralSignals
   val exeSigs = new ExeSignals

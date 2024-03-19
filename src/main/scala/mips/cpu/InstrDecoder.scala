@@ -14,6 +14,7 @@ class InstrFields extends Bundle {
   val rt = UInt(5.W)
   val rd = UInt(5.W)
   val imm16 = UInt(16.W)
+  val jtar26 = UInt(26.W)
 }
 
 object InstrFields {
@@ -26,6 +27,7 @@ object InstrFields {
     instr.shamt := bits(10, 6)
     instr.func := bits(6, 0)
     instr.imm16 := bits(15, 0)
+    instr.jtar26 := bits(25, 0)
     instr
   }
 }

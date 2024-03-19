@@ -342,3 +342,6 @@ hs_err_pid*
 # Metals, Bloop
 .metals
 .bloop
+
+# Verilator
+obj_dir/

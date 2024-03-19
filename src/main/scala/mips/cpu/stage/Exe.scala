@@ -41,7 +41,7 @@ class Exe extends Module {
   wire.mduBusy := false.B
 
   alu.io.a := Mux(sigs.sigBranch, st.nextPc, st.busA)
-  alu.io.b := Mux(sigs.sigBranch, 4.U, Mux(sigs.sigFromImm, st.imm16ex, st.busB))
+  alu.io.b := Mux(sigs.sigBranch, 4.U, Mux(sigs.sigFromImm, st.imm, st.busB))
   alu.io.opcode := sigs.aluOp
   alu.io.shamt := sigs.shamt
 
@@ -67,7 +67,7 @@ class Exe extends Module {
   )
 
   when(debug) {
-    printf(cf"exe- A: ${st.busA}, B: ${st.busB}, aluOp: ${alu.io.opcode}, aluOut: ${wire.dataOut}")
+    printf(cf"exe- A: ${alu.io.a}, B: ${alu.io.b}, aluOp: ${alu.io.opcode}, aluOut: ${wire.dataOut}")
     when(st.exeSigs.regWr & st.exeSigs.rw =/= 0.U) {
       printf(cf", rw: ${sigs.rw}")
     }

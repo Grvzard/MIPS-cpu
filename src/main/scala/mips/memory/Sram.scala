@@ -56,7 +56,7 @@ class Sram(addrWidth: Int, initFile: String = "") extends Module {
 
   when(debug) {
     printf(cf"${mem}\n")
-    printf(cf"result(0x20): ${mem(20)}\n")
+    printf(cf"result(0x20): ${mem(32)}\n")
   }
 
   when(io.en) {

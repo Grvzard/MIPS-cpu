@@ -1,6 +1,7 @@
 package mips.general
 
 import chisel3._
+import chisel3.util._
 
 class Adder32 extends Module {
   val io = IO(new Bundle {
@@ -13,11 +14,14 @@ class Adder32 extends Module {
   })
 
   val cin = io.sigSub.asUInt
-  val sum = io.a +& io.b +& cin
+  val a = io.a
+  val b = io.b ^ Fill(32, cin)
+
+  val sum = a +& b +& cin
 
   io.out := sum(31, 0)
   io.cout := sum(32)
-  io.flgS := io.out(31)
+  io.flgS := sum(31)
   io.flgZ := ~io.out.orR
-  io.flgO := (~io.a(31) & ~io.b(31) & io.out(31)) | (io.a(31) & io.b(31) & ~io.out(31))
+  io.flgO := (~a(31) & ~b(31) & sum(31)) | (a(31) & b(31) & ~sum(31))
 }
