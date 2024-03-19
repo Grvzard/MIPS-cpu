@@ -1,9 +1,8 @@
+#include "VSoc.h"
 #include <verilated.h>
 #include <verilated_vcd_c.h>
-#include "VSoc.h"
 
 vluint64_t sim_time = 0;
-
 
 int main(int argc, char **argv) {
   VerilatedContext *contextp = new VerilatedContext;

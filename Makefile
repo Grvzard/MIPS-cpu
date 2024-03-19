@@ -12,3 +12,7 @@ wave:
 
 gtkw:
 	gtkwave wave.gtkw
+
+.PHONY: clean
+clean:
+	rm verilog/*
