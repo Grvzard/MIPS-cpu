@@ -4,6 +4,8 @@ import circt.stage.ChiselStage
 import mips.general._
 import mips.cpu._
 import mips.memory._
+import chisel3.stage.ChiselGeneratorAnnotation
+import circt.stage.FirtoolOption
 
 trait VerilogDump extends App {
   def vModule: chisel3.RawModule
@@ -16,10 +18,11 @@ trait VerilogDump extends App {
     )
   }
   def vDumpFile() = {
-    ChiselStage.emitSystemVerilogFile(
-      vModule,
-      Array("-td", "verilog"),
-      firtoolOpts = Array("-disable-all-randomization")
+    val args = Array("-td", "verilog")
+    val firtoolOpts = Seq("-disable-all-randomization", "-strip-debug-info")
+    (new ChiselStage).execute(
+      Array("--target", "systemverilog", "--split-verilog") ++ args,
+      Seq(ChiselGeneratorAnnotation(() => vModule)) ++ firtoolOpts.map(FirtoolOption(_))
     )
   }
 }
