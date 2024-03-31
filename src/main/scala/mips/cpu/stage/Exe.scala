@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 import mips.cpu.{ExeDataForward, ExeState, MemState}
 import mips.cpu.{Alu, InstrDecoder}
-import mips.memory.SramInterface
+import mips.memory.SramIn
 
 class Exe extends Module {
   implicit val ramWidth: Int = 8
@@ -12,7 +12,7 @@ class Exe extends Module {
     val exe = Flipped(Decoupled(new ExeState))
     val mem = Output(new MemState)
     val fwExeData = Output(new ExeDataForward)
-    val dram = Flipped(new SramInterface)
+    val dram = Flipped(new SramIn)
   })
   val debug = IO(Input(Bool()))
 
@@ -55,6 +55,7 @@ class Exe extends Module {
   io.fwExeData.sigs.mem2reg := sigs.mem2reg
   io.fwExeData.sigs.regWr := sigs.regWr
   io.fwExeData.sigs.rw := sigs.rw
+
   io.dram.addr := wire.dataOut
   io.dram.en := sigs.mem2reg | sigs.memWr
   io.dram.wr := sigs.memWr
@@ -67,7 +68,9 @@ class Exe extends Module {
   )
 
   when(debug) {
-    printf(cf"exe- A: ${alu.io.a}, B: ${alu.io.b}, aluOp: ${alu.io.opcode}, aluOut: ${wire.dataOut}")
+    printf(
+      cf"exe- A: ${alu.io.a}, B: ${alu.io.b}, aluOp: ${alu.io.opcode}, aluOut: ${wire.dataOut}"
+    )
     when(st.exeSigs.regWr & st.exeSigs.rw =/= 0.U) {
       printf(cf", rw: ${sigs.rw}")
     }

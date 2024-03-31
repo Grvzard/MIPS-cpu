@@ -12,12 +12,12 @@ class Rom(addrWidth: Int, initFile: String = "") extends Module {
   val debug = IO(Input(Bool()))
 
   val inner = Module(new Sram(addrWidth, initFile))
-  inner.io.en := true.B
-  inner.io.wr := false.B
-  inner.io.wmask := 0.U
-  inner.io.wdata := 0.U
+  inner.io.in.en := true.B
+  inner.io.in.wr := false.B
+  inner.io.in.wmask := 0.U
+  inner.io.in.wdata := 0.U
   inner.debug := debug
 
-  inner.io.addr := io.addr
+  inner.io.in.addr := io.addr
   io.rdata := inner.io.rdata
 }

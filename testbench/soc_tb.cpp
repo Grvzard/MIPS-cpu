@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
   dut->eval();
   dut->reset = 0;
 
-  while (sim_time < 340) {
+  while (sim_time < 480) {
     dut->clock ^= 1;
     dut->eval();
     m_trace->dump(sim_time);

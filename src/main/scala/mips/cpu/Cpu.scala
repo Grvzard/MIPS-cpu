@@ -4,10 +4,12 @@ import chisel3._
 import mips._
 import mips.cpu.{stage => stg, _}
 import mips.memory.{RomInterface, SramInterface}
+import board.Display7SegIn
 
 class CpuInterface extends Bundle {
   val iram = Flipped(new RomInterface)
   val dram = Flipped(new SramInterface)
+  val the7seg = Flipped(new Display7SegIn)
 }
 
 class CpuDebugIn extends Bundle {
@@ -23,6 +25,7 @@ class Cpu extends Module {
   val stgId = Module(new stg.Id)
   val stgExe = Module(new stg.Exe)
   val stgMem = Module(new stg.Mem)
+  val mmu = Module(new Mmu)
 
   pc.debug := debugOpts.pc
   stgIf.debug := debugOpts.fetch
@@ -51,7 +54,10 @@ class Cpu extends Module {
   stgId.io.iramData := io.iram.rdata
 
   // DRAM
-  io.dram <> stgExe.io.dram
-  stgMem.io.dramData := io.dram.rdata
+  mmu.io.dram :<>= io.dram
+  mmu.io.in := stgExe.io.dram
+  stgMem.io.dramData := mmu.io.out
+
+  io.the7seg := mmu.io.the7seg
 
 }

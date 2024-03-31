@@ -11,12 +11,17 @@ object dataMask {
     Cat(Fill(8, mask(3)), Fill(8, mask(2)), Fill(8, mask(1)), Fill(8, mask(0))) & data
 }
 
-class SramInterface extends Bundle {
+class SramIn extends Bundle {
   val en = Input(Bool())
   val wr = Input(Bool())
   val addr = Input(UInt(32.W))
   val wmask = Input(UInt(4.W))
   val wdata = Input(UInt(32.W))
+  // val rdata = Output(UInt(32.W))
+}
+
+class SramInterface extends Bundle {
+  val in = new SramIn
   val rdata = Output(UInt(32.W))
 }
 
@@ -59,10 +64,10 @@ class Sram(addrWidth: Int, initFile: String = "") extends Module {
     printf(cf"result(0x20): ${mem(32)}\n")
   }
 
-  when(io.en) {
-    val rwPort = mem(io.addr(addrWidth - 1, 2))
-    when(io.wr) {
-      rwPort := dataMask(io.wdata, io.wmask) | dataMask(rwPort, ~io.wmask)
+  when(io.in.en) {
+    val rwPort = mem(io.in.addr(addrWidth - 1, 2))
+    when(io.in.wr) {
+      rwPort := dataMask(io.in.wdata, io.in.wmask) | dataMask(rwPort, ~io.in.wmask)
     }.otherwise {
       outBuf := rwPort
     }
