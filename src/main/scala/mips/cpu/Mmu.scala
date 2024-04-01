@@ -17,17 +17,17 @@ class MmuIo extends Bundle {
 class Mmu extends Module {
   val io = IO(new MmuIo)
 
-  val addr = RegNext(io.in.addr)
-  val wr = RegNext(io.in.wr)
-  val wdata = RegNext(io.in.wdata)
+  val prevAddr = RegNext(io.in.addr)
 
-  when(addr === "h_A000_0000".U) {
+  when(io.in.addr === "h_A000_0000".U) {
     io.dram.in.en := false.B
-    io.dram := DontCare
-    io.out := 0.U
+    io.dram.in.wr := DontCare
+    io.dram.in.addr := DontCare
+    io.dram.in.wmask := DontCare
+    io.dram.in.wdata := DontCare
 
-    io.the7seg.num := wdata
-    io.the7seg.wrEn := wr
+    io.the7seg.num := io.in.wdata
+    io.the7seg.wrEn := io.in.wr
 
     // printf(cf"-: ${wdata}%x\n")
   }.otherwise {
@@ -35,6 +35,11 @@ class Mmu extends Module {
     io.the7seg.num := 0.U
 
     io.dram.in := io.in
+  }
+
+  when(prevAddr === "h_A000_0000".U) {
+    io.out := 0.U
+  }.otherwise {
     io.out := io.dram.rdata
   }
 }
