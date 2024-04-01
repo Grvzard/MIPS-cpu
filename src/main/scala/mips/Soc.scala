@@ -4,6 +4,7 @@ import chisel3._
 import mips.memory.{Rom, Sram}
 import mips.cpu.Cpu
 import mips.cpu.CpuDebugIn
+import mips.general.ClockDiv
 import board.Display7SegOut
 import board.Display7Seg
 
@@ -20,11 +21,14 @@ class Soc extends Module {
     val dramDump = Input(Bool())
     val cpu = new CpuDebugIn
   })
+  val clockDiv = Module(new ClockDiv(2))
+  clockDiv.io.clockIn := clock
 
-  val iram = Module(new Rom(iramWidth, "tests/fib.ins.bin")) // 256 instructions
-  val dram = Module(new Sram(dramWidth, "tests/fib.dat.bin"))
-  val the7seg = Module(new Display7Seg)
-  val cpu = Module(new Cpu)
+  // 256 instructions
+  val iram = withClock(clockDiv.io.clockOut) { Module(new Rom(iramWidth, "tests/fib.ins.bin")) }
+  val dram = withClock(clockDiv.io.clockOut) { Module(new Sram(dramWidth, "tests/fib.dat.bin")) }
+  val the7seg = withClock(clockDiv.io.clockOut) { Module(new Display7Seg) }
+  val cpu = withClock(clockDiv.io.clockOut) { Module(new Cpu) }
 
   iram.debug := debugOpts.iramDump
   dram.debug := debugOpts.dramDump
