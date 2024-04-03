@@ -1,42 +1,27 @@
 
-AluOp   (OP)  sel sigOV opSel
-00000   addu  0   0     0000
-00001   add   0   1     0000
-00100   sll   0   0     0011
-00110   srl   0   0     0100
-00111   sra   0   0     0101
-01000   or    x   0     0001
-01001   and   x   0     0010
-01010   xor   x   0     0110
-01011   nor   x   0     1011
-01100   lui   x   0     0111
-01111   clz   0   0     1000
-10000   subu  1   0     0000
-10001   sub   1   1     0000
-10010   sltu  1   0     1010
-10011   slt   1   0     1001
-10100   sllv  1   0     0011
-10110   srlv  1   0     0100
-10111   srav  1   0     0101
-11111   clo   1   0     1000
+AluOp   (OP)  sel
+00000   addu  0  
+00001   add   0  
+00100   sll   0  
+00110   srl   0  
+00111   sra   0  
+01000   or    x  
+01001   and   x  
+01010   xor   x  
+01011   nor   x  
+01100   lui   x  
+01111   clz   0  
+10000   subu  1  
+10001   sub   1  
+10010   sltu  1  
+10011   slt   1  
+10100   sllv  1  
+10110   srlv  1  
+10111   srav  1  
+11111   clo   1  
 
 the 5th bit of ALUctr indicates a general-purpose signal "sel"
 
 - the sel
 addu, add, subu, sub, sltu, slt: 1 for subtract, 0 add
 other: as a selector
-
-- output MUX
-opSel   COMMENT
-0000    add
-0001    or
-0010    and
-0011    sll
-0100    srl
-0101    sra
-0110    xor
-0111    lui
-1000    clz
-1001    slt
-1010    sltu
-1011    nor

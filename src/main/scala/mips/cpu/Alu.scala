@@ -5,49 +5,30 @@ import chisel3.util._
 import mips.general.Adder32
 import mips.general.Clz
 
-case class AluOp(opcode: UInt, opmux: UInt)
+case class AluOp(opcode: UInt)
 
 object AluOp {
-  val ADDU = AluOp("b00000".U, "b0000".U)
-  val ADD = AluOp("b00001".U, "b0000".U)
-  val SLL = AluOp("b00100".U, "b0011".U)
-  val SRL = AluOp("b00110".U, "b0100".U)
-  val SRA = AluOp("b00111".U, "b0101".U)
-  val OR = AluOp("b01000".U, "b0001".U)
-  val AND = AluOp("b01001".U, "b0010".U)
-  val XOR = AluOp("b01010".U, "b0110".U)
-  val NOR = AluOp("b01011".U, "b1011".U)
-  val LUI = AluOp("b01100".U, "b0111".U)
-  val CLZ = AluOp("b01111".U, "b1000".U)
-  val SUBU = AluOp("b10000".U, "b0000".U)
-  val SUB = AluOp("b10001".U, "b0000".U)
-  val SLTU = AluOp("b10010".U, "b1010".U)
-  val SLT = AluOp("b10011".U, "b1001".U)
-  val SLLV = AluOp("b10100".U, "b0011".U)
-  val SRLV = AluOp("b10110".U, "b0100".U)
-  val SRAV = AluOp("b10111".U, "b0101".U)
-  val CLO = AluOp("b11111".U, "b1000".U)
+  val ADDU = AluOp("b00000".U)
+  val ADD = AluOp("b00001".U)
+  val SLL = AluOp("b00100".U)
+  val SRL = AluOp("b00110".U)
+  val SRA = AluOp("b00111".U)
+  val OR = AluOp("b01000".U)
+  val AND = AluOp("b01001".U)
+  val XOR = AluOp("b01010".U)
+  val NOR = AluOp("b01011".U)
+  val LUI = AluOp("b01100".U)
+  val CLZ = AluOp("b01111".U)
+  val SUBU = AluOp("b10000".U)
+  val SUB = AluOp("b10001".U)
+  val SLTU = AluOp("b10010".U)
+  val SLT = AluOp("b10011".U)
+  val SLLV = AluOp("b10100".U)
+  val SRLV = AluOp("b10110".U)
+  val SRAV = AluOp("b10111".U)
+  val CLO = AluOp("b11111".U)
 
-  def getMux(opcode: UInt): UInt =
-    (Fill(5, opcode === ADDU.opcode) & ADDU.opmux) |
-      (Fill(5, opcode === ADD.opcode) & ADD.opmux) |
-      (Fill(5, opcode === SLL.opcode) & SLL.opmux) |
-      (Fill(5, opcode === SRL.opcode) & SRL.opmux) |
-      (Fill(5, opcode === SRA.opcode) & SRA.opmux) |
-      (Fill(5, opcode === OR.opcode) & OR.opmux) |
-      (Fill(5, opcode === AND.opcode) & AND.opmux) |
-      (Fill(5, opcode === XOR.opcode) & XOR.opmux) |
-      (Fill(5, opcode === NOR.opcode) & NOR.opmux) |
-      (Fill(5, opcode === LUI.opcode) & LUI.opmux) |
-      (Fill(5, opcode === CLZ.opcode) & CLZ.opmux) |
-      (Fill(5, opcode === SUBU.opcode) & SUBU.opmux) |
-      (Fill(5, opcode === SUB.opcode) & SUB.opmux) |
-      (Fill(5, opcode === SLTU.opcode) & SLTU.opmux) |
-      (Fill(5, opcode === SLT.opcode) & SLT.opmux) |
-      (Fill(5, opcode === SLLV.opcode) & SLLV.opmux) |
-      (Fill(5, opcode === SRLV.opcode) & SRLV.opmux) |
-      (Fill(5, opcode === SRAV.opcode) & SRAV.opmux) |
-      (Fill(5, opcode === CLO.opcode) & CLO.opmux)
+  def getMux(opcode: UInt): UInt = opcode(3, 0)
 }
 
 class Alu extends Module {
@@ -94,16 +75,23 @@ class Alu extends Module {
   io.flgZ := adder.io.flgZ
   io.flgO := adder.io.flgO & sigOV
   io.result :=
-    (Fill(32, "b0000".U === opmux) & res_adder) |
-      (Fill(32, "b0001".U === opmux) & res_or) |
-      (Fill(32, "b0010".U === opmux) & res_and) |
-      (Fill(32, "b0011".U === opmux) & res_sll) |
-      (Fill(32, "b0100".U === opmux) & res_srl) |
-      (Fill(32, "b0101".U === opmux) & res_sra) |
-      (Fill(32, "b0110".U === opmux) & res_xor) |
-      (Fill(32, "b0111".U === opmux) & res_lui) |
-      (Fill(32, "b1000".U === opmux) & res_clz) |
-      (Fill(32, "b1001".U === opmux) & res_slt) |
-      (Fill(32, "b1010".U === opmux) & res_sltu) |
-      (Fill(32, "b1011".U === opmux) & res_nor)
+    (Fill(32, op === AluOp.ADDU.opcode) & res_adder) |
+      (Fill(32, op === AluOp.ADD.opcode) & res_adder) |
+      (Fill(32, op === AluOp.SLL.opcode) & res_sll) |
+      (Fill(32, op === AluOp.SRL.opcode) & res_srl) |
+      (Fill(32, op === AluOp.SRA.opcode) & res_sra) |
+      (Fill(32, op === AluOp.OR.opcode) & res_or) |
+      (Fill(32, op === AluOp.AND.opcode) & res_and) |
+      (Fill(32, op === AluOp.XOR.opcode) & res_xor) |
+      (Fill(32, op === AluOp.NOR.opcode) & res_nor) |
+      (Fill(32, op === AluOp.LUI.opcode) & res_lui) |
+      (Fill(32, op === AluOp.CLZ.opcode) & res_clz) |
+      (Fill(32, op === AluOp.SUBU.opcode) & res_adder) |
+      (Fill(32, op === AluOp.SUB.opcode) & res_adder) |
+      (Fill(32, op === AluOp.SLTU.opcode) & res_sltu) |
+      (Fill(32, op === AluOp.SLT.opcode) & res_slt) |
+      (Fill(32, op === AluOp.SLLV.opcode) & res_sll) |
+      (Fill(32, op === AluOp.SRLV.opcode) & res_srl) |
+      (Fill(32, op === AluOp.SRAV.opcode) & res_sra) |
+      (Fill(32, op === AluOp.CLO.opcode) & res_clz)
 }
