@@ -23,7 +23,7 @@ object Display7Seg {
       num === 1.U || num === 3.U || num === 4.U || num === 5.U || num === 7.U,
       num === 1.U || num === 2.U || num === 3.U || num === 7.U || num === 12.U || num === 13.U,
       num === 0.U || num === 1.U || num === 7.U,
-      0.B
+      1.B
     )
   }
 }
